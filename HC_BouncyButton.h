@@ -10,22 +10,22 @@
   
 class BouncyButton {
   public:
-    BouncyButton(int pin);
-	BouncyButton(int pin, long debounceDelayMillis);
+    BouncyButton(uint8_t pin);
+    BouncyButton(uint8_t pin, uint8_t debounceDelayMillis);
     bool getState();
-	long getStateChangeMillis();
-	int getPin();
-	void init();
-	bool update();
+    unsigned long getStateChangeMillis();
+    uint8_t getPin();
+    void init(bool setInputPullup=true);
+    bool update();
 	
   private:
     bool _state;
-	long _stateChangeMillis;
-	int _pin;
+    unsigned long _stateChangeMillis;
+    uint8_t _pin;
 		
-	bool _debounceLastState;
-	long _debounceMillis;
-	long _debounceDelayMillis;
+    bool _debounceLastState;
+    unsigned long _debounceMillis;
+    uint8_t _debounceDelayMillis;
 };
 
 #endif

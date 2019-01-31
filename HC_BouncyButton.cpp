@@ -8,31 +8,33 @@
 /*
 class BouncyButton {
   public:
+    BouncyButton(uint8_t pin);
+    BouncyButton(uint8_t pin, uint8_t debounceDelayMillis);
     bool getState();
-	long getStateChangeMillis();
-	int getPin();
-	void init();
-	bool update();
+    unsigned long getStateChangeMillis();
+    uint8_t getPin();
+    void init(bool setInputPullup=true);
+    bool update();
 	
   private:
     bool _state;
-	long _stateChangeMillis;
-	int _pin;
+    unsigned long _stateChangeMillis;
+    uint8_t _pin;
 		
-	bool _debounceLastState;
-	long _debounceMillis;
-	long _debounceDelayMillis;
+    bool _debounceLastState;
+    unsigned long _debounceMillis;
+    uint8_t _debounceDelayMillis;
 };
 */
 
 /***************************************************************************
  CONSTRUCTOR
  ***************************************************************************/
-BouncyButton::BouncyButton(int pin) {
+BouncyButton::BouncyButton(uint8_t pin) {
 	_pin = pin;
 	_debounceDelayMillis = HC_BOUNCY_BUTTON_DEFAULT_DEBOUNCE_DELAY;
 }
-BouncyButton::BouncyButton(int pin, long debounceDelayMillis) {
+BouncyButton::BouncyButton(uint8_t pin, uint8_t debounceDelayMillis) {
 	_pin = pin;
 	_debounceDelayMillis = debounceDelayMillis;
 }
@@ -43,10 +45,10 @@ BouncyButton::BouncyButton(int pin, long debounceDelayMillis) {
 bool BouncyButton::getState() {
 	return _state;
 }
-long BouncyButton::getStateChangeMillis() {
+unsigned long BouncyButton::getStateChangeMillis() {
 	return _stateChangeMillis;
 }
-int BouncyButton::getPin() {
+uint8_t BouncyButton::getPin() {
 	return _pin;
 }
 
@@ -54,16 +56,15 @@ int BouncyButton::getPin() {
  Initialize the bounce data, good to call in setup(), right after setting pin modes.
  Expects that the button is not bouncing right now, so don't press buttons during boot.
  ***************************************************************************/
-void BouncyButton::init() {
+void BouncyButton::init(bool setInputPullup=true) {
+
+  if (setInputPullup) {
+    pinMode(_pin, INPUT_PULLUP);
+  }
+  
 	// read the current state of the button, probably HIGH because you use internal pullups and it goes LOW when pressed, right?
 	_debounceLastState = digitalRead(_pin);
 	_state = _debounceLastState;
-	
-//	Serial.print("button on pin ");
-//	Serial.print(_pin);
-//	Serial.print(" initialized to ");
-//	Serial.print(_state);
-//	Serial.println();
 }
 
 /***************************************************************************
@@ -72,7 +73,7 @@ void BouncyButton::init() {
  ***************************************************************************/
 bool BouncyButton::update() {
 
-	int reading = digitalRead(_pin);
+	bool reading = digitalRead(_pin);
 	
 	if (reading!=_debounceLastState) {
 		// there was a change since last time through the routine, we're bouncing
